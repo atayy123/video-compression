@@ -1,15 +1,12 @@
-% get first 50 frames of the video
-Y = yuv_import_y('foreman_qcif/foreman_qcif.yuv',[176 144],50);
-
-% intra frame video coder function that inputs the video frames and
+% conditional replenishment video coder function that inputs the video frames and
 % stepsize, and outputs distortion and rate
+function [d, entro] = conditional_rep(Y, stepsize, en)
 numframe = length(Y);
 
 % write functions for 8x8 2d dct
 A = dctmtx(8);
 dct = @(block_struct) A * block_struct.data * A';
 
-stepsize = 64;
 
 % for the first frame, apply intra mode
 sel = Y{1};
@@ -42,7 +39,7 @@ for i = 1:x_l
     end
 end
 
-lambda = 0.2*(stepsize^2);
+lambda = 0.002*(stepsize^2);
 % conditional replenishment for other frames
 for f = 2:numframe
     % dct transform of the frame
@@ -80,6 +77,6 @@ end
 
 entro = ent/(numframe*numblocks);
 
-
+end
 
 
