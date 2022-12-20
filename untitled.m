@@ -1,0 +1,85 @@
+% get first 50 frames of the video
+Y = yuv_import_y('foreman_qcif/foreman_qcif.yuv',[176 144],50);
+
+% intra frame video coder function that inputs the video frames and
+% stepsize, and outputs distortion and rate
+numframe = length(Y);
+
+% write functions for 8x8 2d dct
+A = dctmtx(8);
+dct = @(block_struct) A * block_struct.data * A';
+
+stepsize = 64;
+
+% for the first frame, apply intra mode
+sel = Y{1};
+transform = blockproc(sel, [8 8], dct);
+quantized = stepsize * round(transform/stepsize);
+
+% calculate distortion for the first frame
+d = immse(transform, quantized)/numframe;
+
+% rates for different modes
+R_intra = en(log2(stepsize)-2) + 1;
+R_copy = 1;
+
+% divide frame to blocks
+[rows, cols] = size(sel);
+y_l = rows/16;
+x_l = cols/16;
+numblocks = x_l * y_l;
+
+ent = numblocks * R_intra;
+
+storage = cell(y_l, x_l);
+% block by block operation to store the blocks
+for i = 1:x_l
+    for j = 1:y_l
+        % flatten the block for easier calculation
+        block = quantized(16*(j-1)+1:16*j, 16*(i-1)+1:16*i);
+        % store the blocks
+        storage{j,i} = block;
+    end
+end
+
+lambda = 0.2*(stepsize^2);
+% conditional replenishment for other frames
+for f = 2:numframe
+    % dct transform of the frame
+    sel = Y{f};
+    transform = blockproc(sel, [8 8], dct);
+    for i = 1:x_l
+        for j = 1:y_l
+            % get the block
+            block = transform(16*(j-1)+1:16*j, 16*(i-1)+1:16*i);
+
+            % calculate Lagrangian for copy mode
+            d_copy = immse(block, storage{j,i});
+            L_copy = d_copy + lambda * R_copy;
+            
+            % calculate Lagrangian for intra mode
+            quantized = stepsize * round(block/stepsize);
+            d_intra = immse(quantized, block);
+            L_intra = d_intra + lambda * R_intra;
+            
+            % copy mode
+            if L_intra >= L_copy
+                d = d + d_copy/(numframe*numblocks);
+                ent = ent + R_copy;
+            
+            % intra mode
+            else
+                d = d + d_intra/(numframe*numblocks);
+                ent = ent + R_intra;
+                % change the stored block
+                storage{j,i} = quantized;
+            end
+        end
+    end
+end
+
+entro = ent/(numframe*numblocks);
+
+
+
+
