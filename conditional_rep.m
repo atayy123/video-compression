@@ -16,15 +16,15 @@ quantized = stepsize * round(transform/stepsize);
 % calculate distortion for the first frame
 d = immse(transform, quantized)/numframe;
 
-% rates for different modes
-R_intra = en(log2(stepsize)-2) + 1;
-R_copy = 1;
-
 % divide frame to blocks
 [rows, cols] = size(sel);
 y_l = rows/16;
 x_l = cols/16;
 numblocks = x_l * y_l;
+
+% rates for different modes
+R_intra = en(log2(stepsize)-2)*256 + 1;
+R_copy = 1;
 
 ent = numblocks * R_intra;
 
@@ -39,7 +39,7 @@ for i = 1:x_l
     end
 end
 
-lambda = 0.002*(stepsize^2);
+lambda = 0.0005*(stepsize^2);
 % conditional replenishment for other frames
 for f = 2:numframe
     % dct transform of the frame
@@ -75,7 +75,7 @@ for f = 2:numframe
     end
 end
 
-entro = ent/(numframe*numblocks);
+entro = ent/(numframe);
 
 end
 

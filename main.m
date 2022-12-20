@@ -40,6 +40,6 @@ for i = 3:6
     [d_cond(i-2),en_cond(i-2)] = conditional_rep(Y, 2^i, en_intra);
 end
 
-entro_cond = en_cond*sz*30/1000;
+entro_cond = en_cond*30/1000;
 psnr_cond = 10*log10(255^2./d_cond);
-plot(entro_cond,psnr_cond)
+plot(entro_cond, psnr_cond)
