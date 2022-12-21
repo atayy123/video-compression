@@ -1,12 +1,12 @@
-% conditional replenishment video coder function that inputs the video frames and
-% stepsize, and outputs distortion and rate
+% conditional replenishment video coder function 
+% parameters: video frames, stepsize, 
+% returns: distortion and rate
 function [d, entro] = conditional_rep(Y, stepsize, en)
-numframe = length(Y);
+num_frames = length(Y);
 
 % write functions for 8x8 2d dct
 A = dctmtx(8);
 dct = @(block_struct) A * block_struct.data * A';
-
 
 % for the first frame, apply intra mode
 sel = Y{1};
@@ -14,7 +14,7 @@ transform = blockproc(sel, [8 8], dct);
 quantized = stepsize * round(transform/stepsize);
 
 % calculate distortion for the first frame
-d = immse(transform, quantized)/numframe;
+d = immse(transform, quantized)/num_frames;
 
 % divide frame to blocks
 [rows, cols] = size(sel);
@@ -41,7 +41,7 @@ end
 
 lambda = 0.0005*(stepsize^2);
 % conditional replenishment for other frames
-for f = 2:numframe
+for f = 2:num_frames
     % dct transform of the frame
     sel = Y{f};
     transform = blockproc(sel, [8 8], dct);
@@ -61,12 +61,12 @@ for f = 2:numframe
             
             % copy mode
             if L_intra >= L_copy
-                d = d + d_copy/(numframe*numblocks);
+                d = d + d_copy/(num_frames*numblocks);
                 ent = ent + R_copy;
             
             % intra mode
             else
-                d = d + d_intra/(numframe*numblocks);
+                d = d + d_intra/(num_frames*numblocks);
                 ent = ent + R_intra;
                 % change the stored block
                 storage{j,i} = quantized;
@@ -75,7 +75,7 @@ for f = 2:numframe
     end
 end
 
-entro = ent/(numframe);
+entro = ent/(num_frames);
 
 end
 
