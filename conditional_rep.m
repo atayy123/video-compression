@@ -1,5 +1,5 @@
 % conditional replenishment video coder function 
-% parameters: video frames, stepsize, 
+% parameters: video frames, stepsize, entropy of intra frame coding 
 % returns: distortion (mse) and rate (entropy per frame)
 function [d, entro] = conditional_rep(Y, stepsize, en)
 num_frames = length(Y);
