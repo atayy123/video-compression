@@ -1,6 +1,6 @@
 % intra frame video coder function for whole frame sequence
 % parameters: video frames and stepsize
-% returns: distortion and rate
+% returns: distortion (mse) and rate (average entropy per pixel)
 function [d, entro] = intraframe_coder(Y, stepsize)
     % write functions for 8x8 2d dct
     A = dctmtx(8);
@@ -29,7 +29,7 @@ function [d, entro] = intraframe_coder(Y, stepsize)
         % quantize coefficients
         result = stepsize * round(transformed/stepsize);
         % calculate distortion using Parseval's theorem and add it up
-        d = d + immse(result, transformed)/num_frames; % ???? devide later?
+        d = d + immse(result, transformed)/num_frames;
         transformedY{i} = result;
         % prepare entropy
         entro_temp = blockproc(result, [16 16], ent);

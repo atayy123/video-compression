@@ -43,3 +43,7 @@ end
 entro_cond = en_cond*30/1000;
 psnr_cond = 10*log10(255^2./d_cond);
 plot(entro_cond, psnr_cond)
+legend('Intra-Frame Video Coder','Conditional Replenishment Video Coder')
+
+%% Video coder with motion compensation
+
