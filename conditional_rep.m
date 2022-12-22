@@ -41,7 +41,7 @@ end
 lambda = 0.0005*(stepsize^2);
 % conditional replenishment for other frames
 for f = 2:num_frames
-    % dct transform of the currnet frame
+    % dct transform of the current frame
     sel = Y{f};
     transform = blockproc(sel, [8 8], dct);
     % decide on the mode for each block based on the lagrangian for each

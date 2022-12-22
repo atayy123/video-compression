@@ -50,7 +50,7 @@ d_mc = zeros(4,1);
 en_mc = zeros(4,1);
 
 for i = 3:6
-    [d_mc(i-2),en_mc(i-2)] = conditional_rep(Y, 2^i, en_intra);
+    [d_mc(i-2),en_mc(i-2)] = conditional_rep(Y, 2^i, en_intra(log2(stepsize)-2));
 end
 % bit rate in kbit and PSNR
 entro_mc = en_mc*30/1000;
