@@ -63,7 +63,6 @@ for f = 2:num_frames
             % select frame based on minimal value of Lagrangian
   
             % copy mode
-            % update distortion (distortion of first frame through quantization + distortion through copying)
             if L_copy <= L_intra 
                 d = d + d_copy/(num_frames*numblocks);
                 ent = ent + R_copy;

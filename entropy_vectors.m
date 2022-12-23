@@ -1,4 +1,6 @@
 % calculate entropy of cell array with matrices
+% parameters:
+% returns: entropy per motion vector
 function ent = entropy_vectors(vectors)
     % vectors = {[1 1],[1 1],[0 0],[0 0]};
     [dimension, num_v] = size(vectors);

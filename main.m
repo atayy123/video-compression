@@ -1,9 +1,9 @@
 % get first 50 frames of the video
 Y = yuv_import_y('foreman_qcif/foreman_qcif.yuv',[176 144],50);
-for i=1:20
-    figure
-    image(Y{i});
-end
+% for i=1:20
+%     figure
+%     image(Y{i});
+% end
 %% Intra-Frame Video Coder
 % calculate distortion and rate for different stepsizes
 d_intra = zeros(4,1);
@@ -47,7 +47,6 @@ end
 entro_cond = en_mc*30/1000;
 psnr_cond = 10*log10(255^2./d_mc);
 plot(entro_cond, psnr_cond)
-legend('Intra-Frame Video Coder','Conditional Replenishment Video Coder')
 
 %% Video coder with motion compensation
 d_mc = zeros(4,1);
@@ -61,5 +60,4 @@ end
 entro_mc = en_mc*30/1000;
 psnr_mc = 10*log10(255^2./d_mc);
 plot(entro_mc, psnr_mc)
-
-
+legend('Intra-Frame Video Coder','Conditional Replenishment Video Coder','Video coder with motion compensation')

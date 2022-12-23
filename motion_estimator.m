@@ -20,7 +20,8 @@ for i = -10:10 % x-coordinate
             block_p = previous_frame(y_start:y_end, x_start:x_end);
             block_c = current_frame(16*(n-1)+1:16*n, 16*(m-1)+1:16*m);
             % compare frames
-            ssd = immse(block_c,block_p);
+            difference = double(block_c) - double(block_p);
+            ssd = sum(difference(:).^2);
             % find mv with minimal ssd
             if ssd <= best_ssd || best_ssd == -1
                 best_ssd = ssd;
