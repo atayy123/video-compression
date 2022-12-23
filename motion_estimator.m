@@ -1,9 +1,9 @@
 % estimate best vector based on SSD (sum of squared distances)
-% parameters: previous frame, current block
+% parameters: current block, previous frame
 % returns: optimal motion compensation vector for each block (2D)
-function motion_vector = motion_estimator(current_frame, previous_frame, current_block)
-m = current_block(1); % x-coordinate
-n = current_block(2); % y-coordinate
+function motion_vector = motion_estimator(current_frame, previous_frame, current_block_position)
+m = current_block_position(1); % x-coordinate
+n = current_block_position(2); % y-coordinate
 best_ssd = -1;
 [rows, cols] = size(current_frame);
 
@@ -16,7 +16,7 @@ for i = -10:10 % x-coordinate
         y_end = 16*n+j;
         % only take into account if motion vector points inside the image
         % (using short circuit boolean expressions)
-        if x_start >= 0 && x_end <= cols && y_start >= 0 && y_end <= rows
+        if x_start >= 1 && x_end <= cols && y_start >= 1 && y_end <= rows
             block_p = previous_frame(y_start:y_end, x_start:x_end);
             block_c = current_frame(16*(n-1)+1:16*n, 16*(m-1)+1:16*m);
             % compare frames
