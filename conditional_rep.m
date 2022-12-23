@@ -1,6 +1,6 @@
 % conditional replenishment video coder function 
 % parameters: video frames, stepsize, entropy of intra frame coding 
-% returns: distortion (mse) and rate (entropy per frame)
+% returns: distortion per pixel (mse) and rate (entropy per frame)
 function [d, entro] = conditional_rep(Y, stepsize, en)
 num_frames = length(Y);
 
@@ -41,7 +41,7 @@ end
 lambda = 0.0005*(stepsize^2);
 % conditional replenishment for other frames
 for f = 2:num_frames
-    % dct transform of the currnet frame
+    % dct transform of the current frame
     sel = Y{f};
     transform = blockproc(sel, [8 8], dct);
     % decide on the mode for each block based on the lagrangian for each
@@ -54,17 +54,16 @@ for f = 2:num_frames
             block = transform(16*(j-1)+1:16*j, 16*(i-1)+1:16*i);
             % calculate Lagrangian for copy mode
             d_copy = immse(block, storage{j,i});
-            L_copy = d_copy + lambda * R_copy;
+            J_copy = d_copy + lambda * R_copy;
             % calculate Lagrangian for intra mode
             quantized = stepsize * round(block/stepsize);
-            d_intra = immse(quantized, block);
-            L_intra = d_intra + lambda * R_intra;
+            d_intra = immse(block, quantized);
+            J_intra = d_intra + lambda * R_intra;
             
             % select frame based on minimal value of Lagrangian
   
             % copy mode
-            % update distortion (distortion of first frame through quantization + distortion through copying)
-            if L_copy <= L_intra 
+            if J_copy <= J_intra 
                 d = d + d_copy/(num_frames*numblocks);
                 ent = ent + R_copy;
             % intra mode

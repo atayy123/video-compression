@@ -1,24 +1,19 @@
 % intra frame video coder function for whole frame sequence
 % parameters: video frames and stepsize
-% returns: distortion (mse) and rate (average entropy per pixel)
+% returns: distortion per pixel (mse) and rate (average entropy per pixel)
 function [d, entro] = intraframe_coder(Y, stepsize)
     % write functions for 8x8 2d dct
     A = dctmtx(8);
     dct = @(block_struct) A * block_struct.data * A';
     % prepare sorting the coefficients for entropy calculation
     ent = @(block_struct) reshape(transpose(block_struct.data), 1, []);
-    
+    % calculate needed parameters of the fram
     num_frames = length(Y);
-    
-    % transform all frames of the video
-    transformedY = cell(num_frames,1);
-    % calculate frame size
     [n,m] = size(Y{1});
     frame_size = n*m;
     
     % 99 blocks from 50 frames (4950), 256 coefficients
     full_VLC = zeros(4950, 256);
-    
     % calculate average distortion
     d = 0;
     
@@ -30,7 +25,6 @@ function [d, entro] = intraframe_coder(Y, stepsize)
         result = stepsize * round(transformed/stepsize);
         % calculate distortion using Parseval's theorem and add it up
         d = d + immse(result, transformed)/num_frames;
-        transformedY{i} = result;
         % prepare entropy
         entro_temp = blockproc(result, [16 16], ent);
         entro_temp = reshape(entro_temp', 256, frame_size/256)';
@@ -41,8 +35,8 @@ function [d, entro] = intraframe_coder(Y, stepsize)
     
     % calculate the entropy
     entro = 0;
-    % sum over the entropies of all coefficients of all frames to get the
-    % total entropy per block
+    % sum and average entropies of all coefficients of all frames to get
+    % the entropy per pixel
     for j = 1:256
         % select jth coefficient from all blocks
         sel = full_VLC(:,j);

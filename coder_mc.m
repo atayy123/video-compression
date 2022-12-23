@@ -203,33 +203,3 @@ end
 % summed entropy over all frames has to be averaged for one frame
 entro = ent/(num_frames);
 end
-
-% notes
-% 1. calculate cost function for all three modes:
-% J = D + lambda*R
-% 
-% see part 2 and 3 for calculation
-% motion-compensation: 
-% - rate (entropy calculation): 
-% prediction (motion vectors for each block) + residual (coded by intra-frame coder, reestimate statistics) + number of bit for intermode (1 or 2?)
-% - distortion: 
-% mse (original, reconstructed image)
-% 
-% - residual: (original - reconstructed image) 
-% - reconstructed image: 	sum of motion compensated block (for each block take the block from the previous image shifted by vector)
-% 			and residual block (original - motion compensation)
-% - reestimate statistics: 
-% 	perform motion compensation for all frames
-% 	compute coefficients of all residuals
-% 	calculate average entropy for one frame (take entropies of all coefficients individually and add the up) 
-% 	--> used for calculation of all frames
-% 
-% - motion estimator: select best motion vector for each block (minimizes the mse of the prediction)
-% 	--> make a block procedure for current image 
-% 	--> loop over all possible displacement windows and take the same block shifted by all displacement vectors (from the previous image)
-% 	--> calculate MSEs 
-% 	--> pick vector for the block with the lowest MSE
-% 
-% - entropy for motion vectors: 
-% 
-% 2. mode selection through if-else
