@@ -125,10 +125,14 @@ for f = 2:num_frames
             elseif J_mc <= J_intra 
                 d = d + d_mc/(num_frames*numblocks);
                 ent = ent + R_mc;
+                % change the stored block
+                storage{j,i} = quantized;
             % intra mode
             else
                 d = d + d_intra/(num_frames*numblocks); % bc loops over all frames and all blocks
                 ent = ent + R_intra;
+                % change the stored block
+                storage{j,i} = quantized;
             end
         end
     end
