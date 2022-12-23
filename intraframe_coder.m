@@ -12,7 +12,7 @@ function [d, entro] = intraframe_coder(Y, stepsize)
     
     % transform all frames of the video
     transformedY = cell(num_frames,1);
-    % calulate frame size
+    % calculate frame size
     [n,m] = size(Y{1});
     frame_size = n*m;
     
